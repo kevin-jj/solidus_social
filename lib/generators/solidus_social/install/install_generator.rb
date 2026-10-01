@@ -8,6 +8,8 @@ module SolidusSocial
       class_option :auto_run_migrations, type: :boolean, default: false
 
       def add_stylesheets
+        return unless File.exist?(File.join(destination_root, 'vendor/assets/stylesheets/spree/frontend/all.css'))
+
         inject_into_file 'vendor/assets/stylesheets/spree/frontend/all.css', " *= require spree/frontend/solidus_social\n", before: %r{\*/}, verbose: true
       end
 

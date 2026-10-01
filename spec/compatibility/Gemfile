@@ -1,0 +1,7 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+# Standalone adapter tests do not boot Solidus or require a host database.
+gem 'rails', ENV.fetch('COMPAT_RAILS_VERSION', '~> 8.1.0')
+gem 'rspec', '~> 3.13'
