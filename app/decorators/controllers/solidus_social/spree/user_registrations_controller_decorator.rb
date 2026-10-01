@@ -13,15 +13,17 @@ module SolidusSocial
 
       def build_resource(*args)
         super
-        @spree_user.apply_omniauth(session[:omniauth]) if session[:omniauth]
-        @spree_user
+        resource.apply_omniauth(session[:omniauth]) if session[:omniauth]
+        resource
       end
 
       def clear_omniauth
-        session[:omniauth] = nil unless @spree_user.new_record?
+        session.delete(:omniauth) if resource&.persisted?
       end
 
-      ::Spree::UserRegistrationsController.prepend self
+      controller = 'UserRegistrationsController'.safe_constantize ||
+        'Spree::UserRegistrationsController'.safe_constantize
+      controller.prepend(self) if controller && !controller.ancestors.include?(self)
     end
   end
 end

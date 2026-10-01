@@ -1,0 +1,34 @@
+name: Storefront compatibility
+
+on:
+  pull_request:
+  push:
+    branches: [master, 'codex/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compatibility:
+    name: Ruby ${{ matrix.ruby }} / Rails ${{ matrix.rails }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ruby: '3.3'
+            rails: '~> 7.2.0'
+          - ruby: '4.0'
+            rails: '~> 8.1.0'
+    env:
+      BUNDLE_GEMFILE: spec/compatibility/Gemfile
+      COMPAT_RAILS_VERSION: ${{ matrix.rails }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Run standalone plugin regression tests
+        run: bundle exec rspec --options /dev/null spec/compatibility --format documentation
